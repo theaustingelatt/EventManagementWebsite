@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <!--header section -->
+    <header class="site-header">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <a href="{{ url_for('main.index') }}">
+                        <h1 class="site-title">GameNexus</h1>
+                    </a>
+                    <p class="site-tagline">Find and join gaming events around you!</p>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-dark">
+    <div class="container">        
+        <!--Hamburger button for mobile -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!--Navbar content -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.create_event') }}">
+                            <i class="fas fa-plus-circle"></i> Create Event
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.user_detail', user_id=current_user.id) }}">
+                            <i class="fas fa-user"></i> My Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                            <i class="fas fa-sign-out-alt"></i> Log Out
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<!--Search Section-->
+<section class="container mt-5 search-section">
+        <form method="POST" class="search-form">
+            <div class="row mb-4">
+                <!-- Games Section -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="game">Game</label>
+                        <select class="form-control" id="game" name="game">
+                            <option value="">All Games</option>
+                            {% for game in games %}
+                                <option value="{{ game }}" {% if request.form.get('game') == game %}selected{% endif %}>
+                                    {{ game }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Locations Section -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select class="form-control" id="location" name="location">
+                            <option value="">All Locations</option>
+                            {% for location in locations %}
+                                <option value="{{ location }}" {% if request.form.get('location') == location %}selected{% endif %}>
+                                    {{ location }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Search Button Section -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="invisible">Search</label>
+                        <button type="submit" class="btn btn-primary w-100 form-control">Search Events</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+</section>
+
+<!--Events section -->
+<section class="container mt-5 events-section">
+    <h2>{% if search_performed %}Search Results{% else %}Popular Events Now{% endif %}</h2>
+    <div class="row" id="event-cards">
+        {% if search_performed and results %}
+            {% for event in results %}
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <!-- Display event image if available, otherwise show a default image -->
+                    {% if event.image_url %}
+                        <img src="{{ url_for('static', filename=event.image_url) }}" class="card-img-top" alt="{{ event.game }} Image">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/default_event.png') }}" class="card-img-top" alt="Default Event Image">
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <!-- Event Status Badge -->
+                        <span class="badge badge-{{ 'danger' if event.status == 'Cancelled' else 'secondary' if event.status == 'Inactive' else 'success' if event.status == 'Open' else 'warning' }}">
+                            {{ event.status }}
+                        </span>
+
+                        <h5 class="card-title mt-2">{{ event.game }}<br>{{ event.event_type }}</h5>
+                        <div class="row">
+                            <div class="col-6">  
+                                <p class="card-time-text mb-1">{{ event.date_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p class="card-text mb-1">{{ event.location }}</p>
+                                <p class="card-price-text mb-1">${{ event.ticket_price|int }}</p>
+                            </div>
+                            <div class="col-6"> 
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <img src="{{ url_for('static', filename='img/participant.png') }}" 
+                                        class="card-participant-icon {% if event.participants == event.max_participants %}icon-sold-out{% endif %}" 
+                                        alt="Player Icon">
+                                    <span class="participant-text mx-1">{{ event.participants }}/{{ event.max_participants }}</span>
+                                    <span class="badge">Participants</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <img src="{{ url_for('static', filename='img/spectator.png') }}" 
+                                        class="card-participant-icon {% if event.spectators == event.max_spectators %}icon-sold-out{% endif %}" 
+                                        alt="Spectator Icon">
+                                    <span class="participant-text mx-1">{{ event.spectators }}/{{ event.max_spectators }}</span>
+                                    <span class="badge">Spectators</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('main.event_details', event_id=event.id) }}" class="btn btn-primary btn-block mt-3">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        {% elif search_performed and not results %}
+            <p>No events found matching your criteria.</p>
+        {% else %}
+            {% for event in popular_events %}
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    {% if event.image_url %}
+                        <img src="{{ url_for('static', filename=event.image_url) }}" class="card-img-top" alt="{{ event.game }} Image">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='img/default_event.png') }}" class="card-img-top" alt="Default Event Image">
+                    {% endif %}
+                    <div class="card-body">
+                        <!-- Event Status Badge -->
+                        <span class="badge badge-{{ 'danger' if event.status == 'Cancelled' else 'secondary' if event.status == 'Inactive' else 'success' if event.status == 'Open' else 'warning' }}">
+                            {{ event.status }}
+                        </span>
+                        <h5 class="card-title mt-2">{{ event.game }}<br>{{ event.event_type }}</h5>
+                        <div class="row">
+                            <div class="col-6">  
+                                <p class="card-time-text mb-1">{{ event.date_time.strftime('%Y-%m-%d %H:00') }}</p>
+                                <p class="card-text mb-1">{{ event.location }}</p>
+                                <p class="card-text mb-1">${{ event.ticket_price|int }}</p>
+                            </div>
+                            <div class="col-6"> 
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <img src="{{ url_for('static', filename='img/participant.png') }}" 
+                                         class="card-participant-icon {% if event.participants == event.max_participants %}icon-sold-out{% endif %}" 
+                                         alt="Player Icon">
+                                    <span class="participant-text mx-1">{{ event.participants }}/{{ event.max_participants }}</span>
+                                    <span class="badge">Participants</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <img src="{{ url_for('static', filename='img/spectator.png') }}" 
+                                         class="card-participant-icon {% if event.spectators == event.max_spectators %}icon-sold-out{% endif %}" 
+                                         alt="Spectator Icon">
+                                    <span class="participant-text mx-1">{{ event.spectators }}/{{ event.max_spectators }}</span>
+                                    <span class="badge">Spectators</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('main.event_details', event_id=event.id) }}" class="btn btn-primary btn-block mt-3">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</section>
+
+<!--Contact us section -->
+<section class="container mt-5 casual-games-section">
+    <h2>Contact Us</h2>
+    <p>If you have any questions or need further information, feel free to reach out to us!</p>
+   
+    <form class="mt-4" method="POST" action="{{ url_for('main.index') }}">
+        {{ form.csrf_token }}
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", placeholder="Enter your name") }}
+            {% if form.name.errors %}
+                {% for error in form.name.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control", placeholder="Enter your email") }}
+            {% if form.email.errors %}
+                {% for error in form.email.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.message.label(class="form-label") }}
+            {{ form.message(class="form-control", rows="4", placeholder="Enter your message") }}
+            {% if form.message.errors %}
+                {% for error in form.message.errors %}
+                    <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="d-flex justify-content-center mt-3">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>            
+    </form>
+</section>
+
+<!--Social media section -->
+<div class="container text-center mt-5">
+    <h3>Follow Us</h3>
+    <div class="mt-3 social-links">
+        <a href="https://www.instagram.com" target="_blank">Instagram</a> |
+        <a href="https://www.twitter.com" target="_blank">Twitter</a> |
+        <a href="https://www.facebook.com" target="_blank">Facebook</a>
+    </div>
+</div>
+{% endblock %}

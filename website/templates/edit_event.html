@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="section container mt-5 mb-5">
+    <h2 class="text-center">Edit Event</h2>
+
+    <!--Hamburger button for mobile navigation -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
+    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!--Navbar links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto">
+        {% if current_user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('main.index') }}">
+                    <i class="fas fa-plus-circle"></i> Browse Events
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('main.user_detail', user_id=current_user.id) }}">
+                    <i class="fas fa-user"></i> My Details
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.login') }}">
+                    <i class="fas fa-sign-in-alt"></i> Log In
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+    </div>
+
+    <!--Event edit form, with POST method and support for file uploads-->
+    <form method="POST" enctype="multipart/form-data">
+        
+        <!--Event name -->
+        <div class="form-group">
+            <label for="gameTitle">Event Name:</label>
+            <input type="text" class="form-control" id="gameTitle" name="gameTitle" value="{{ event.event_type }}" required>
+        </div>
+
+        <!--Event date -->
+        <div class="form-group">
+            <label for="eventDate">Event Date:</label>
+            <input type="date" class="form-control" id="eventDate" name="eventDate" value="{{ event_date }}" required>
+        </div>
+
+        <!--Event time-->
+        <div class="form-group">
+            <label for="eventTime">Event Time:</label>
+            <input type="time" class="form-control" id="eventTime" name="eventTime" value="{{ event_time }}" required>
+        </div>
+
+        <!--Event location -->
+        <div class="form-group">
+            <label for="eventLocation">Location:</label>
+            <input type="text" class="form-control" id="eventLocation" name="eventLocation" value="{{ event.location }}" required>
+        </div>
+
+        <!--Game title-->
+        <div class="form-group">
+            <label for="eventType">Game Title:</label>
+            <input type="text" class="form-control" id="eventType" name="eventType" value="{{ event.game }}" required>
+        </div>
+
+        <!--Platform selection -->
+        <div class="form-group">
+            <label>Platform:</label>
+            <select class="form-control" name="platform" required>
+                <option value="PC" {% if event.platform == 'PC' %}selected{% endif %}>PC</option>
+                <option value="Xbox" {% if event.platform == 'Xbox' %}selected{% endif %}>Xbox</option>
+                <option value="PlayStation" {% if event.platform == 'PlayStation' %}selected{% endif %}>PlayStation</option>
+                <option value="Other" {% if event.platform == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <!--Maximum participants input with minimum validation -->
+        <div class="form-group">
+            <label for="max_participants">Max Participants:</label>
+            <input type="number" class="form-control" id="max_participants" name="max_participants" 
+                   value="{{ event.max_participants }}" min="1" required>
+            <div class="invalid-feedback">
+                Please enter a number greater than 0.
+            </div>
+        </div>
+
+        <!--Maximum spectators-->
+        <div class="form-group">
+            <label for="spectators">Max Spectators:</label>
+            <input type="number" class="form-control" id="spectators" name="spectators" 
+                   value="{{ event.spectators }}" min="0" required>
+        </div>
+
+        <!--Ticket price-->
+        <div class="form-group">
+            <label for="ticketPrice">Ticket Price:</label>
+            <input type="number" class="form-control" id="ticketPrice" name="ticketPrice" 
+                   value="{{ event.ticket_price }}" step="0.01" min="0" required>
+        </div>
+
+        <!--Event description textarea -->
+        <div class="form-group">
+            <label for="eventDescription">Event Description:</label>
+            <textarea class="form-control" id="eventDescription" name="eventDescription" 
+                      rows="3" required>{{ event.description }}</textarea>
+        </div>
+
+        <!--Form action buttons for saving or cancelling changes -->
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{{ url_for('main.user_detail', user_id=current_user.id) }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

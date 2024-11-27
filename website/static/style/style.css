@@ -1,0 +1,305 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body,
+.logincard {
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: 'Press Start 2P', cursive;
+    padding-bottom: 60px;
+    overflow-y: auto;
+    background-image: radial-gradient(circle, #FFD700 1px, transparent 1px);
+    background-size: 25px 25px;
+    flex: 1;
+}
+
+#created-events.tabpane,
+#created-events .list-group,
+#created-events .list-group-item {
+    background-color: #000000;
+    color: #FFFFFF;
+    font-family: 'Press Start 2P', cursive;
+    padding-bottom: 60px;
+    overflow-y: auto;
+    background-size: 25px 25px;
+    flex: 1;
+}
+
+.tab-content {
+    min-height: 520px;
+    position: relative;
+    background-color: #000000;
+    border: 2px solid #FF0000;
+    padding: 20px;
+}
+
+.tab-pane {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding: 20px;
+}
+
+.tab-pane.fade {
+    opacity: 0;
+    transition: opacity 0.15s linear;
+}
+
+.tab-pane.fade.show {
+    opacity: 1;
+}
+
+.list-group {
+    overflow-y: auto;
+}
+
+.list-group-item {
+    margin-bottom: 10px;
+}
+
+.site-header {
+    margin-top: 50px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.navbar-brand {
+    color: #FFD700;
+    text-shadow: 2px 2px #FF0000;
+    text-align: center;
+}
+
+p,
+.card-text,
+.participant-text {
+    color: #00f3f3;
+}
+
+.navbar {
+    background-color: #000000 !important;
+    border-bottom: 2px solid #FFD700;
+    box-shadow: 0 4px 2px -2px #FF0000;
+}
+
+.navbar-brand,
+.nav-link {
+    color: #FFD700 !important;
+    text-shadow: 2px 2px #FF0000;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+.card {
+    background-color: #1A1A1A;
+    border: 2px solid #FF0000;
+    color: #FFFFFF;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.card-title {
+    color: #FFD700;
+    font-size: 20px;
+    text-align: left;
+}
+
+.card-text,
+.participant-text {
+    font-size: 12px;
+    color: #FFFFFF;
+
+}
+
+.card-time-text {
+    font-size: 10px;
+    color: #00f3f3;
+}
+
+.badge {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.btn-primary {
+    background-color: #02ce02;
+    font-size: 14px;
+    border: none;
+    margin-top: auto;
+}
+
+.btn-primary:hover {
+    background-color: #FF00FF;
+    color: #FFFFFF;
+}
+
+footer {
+    background-color: #4645459a;
+    color: #FFD700;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+}
+
+.social-links {
+    margin-bottom: 0;
+}
+
+.footer-text {
+    font-size: 12px;
+}
+
+/* Event details page */
+.event-date {
+    font-size: 13px;
+    color: #00f3f3;
+    text-align: left;
+}
+
+.event-location {
+    font-size: 14px;
+    color: #00f3f3
+}
+
+.event-description {
+    font-size: 14px;
+    color: #FFFFFF
+}
+
+.comments-box,
+.logincard {
+    background-color: #1A1A1A;
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 15px;
+    color: #FFFFFF;
+}
+
+.comment p {
+    color: #00FF00;
+    font-size: 14px;
+}
+
+.comment small {
+    color: #FFFFFF;
+    font-size: 9px;
+}
+
+.eventdetailpnv {
+    font-size: 13px;
+}
+
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+}
+
+.events-section h2 {
+    margin-bottom: 2rem;
+}
+
+.card-participant-icon {
+    height: 20px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.card-time-text,
+.card-text {
+    min-height: 1em;
+}
+
+.card-text,
+.card-title {
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.site-title a {
+    display: inline-block;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 10px 20px;
+}
+
+.site-header a:hover {
+    text-decoration: underline;
+}
+
+.event-item .btn-link {
+    color: #FFD700;
+    text-decoration: none;
+    background-color: #1A1A1A;
+    border: 2px solid #FF0000;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.event-item .btn-link:hover {
+    background-color: #2A2A2A;
+    color: #FFD700;
+    text-decoration: none;
+}
+
+.event-item .btn-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.event-item .fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+.event-item .btn-link[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.event-item .card {
+    margin-top: 5px;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+}
+
+.event-item .collapse {
+    transition: all 0.3s ease;
+}
+
+.icon-sold-out {
+    color: red;
+    filter: brightness(0) saturate(100%) invert(15%) sepia(95%) saturate(6932%) hue-rotate(358deg) brightness(95%) contrast(112%);
+}
+
+.content-section {
+    min-height: 80vh;
+}
+
+.title-button {
+    color: #FFD700;
+    text-decoration: none;
+}
+
+.title-button:hover {
+    color: #7e6b00;
+    text-decoration: none;
+}

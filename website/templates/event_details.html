@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container mt-5 flex-grow-1">
+    <div class="row">
+        <!--Event details column-->
+        <div class="col-md-8">
+            <h2 class="event-title">{{ event.game }} {{ event.event_type }}</h2>
+
+            <!-- Display event image if available, otherwise show default image -->
+            <div class="mb-3">
+                <img src="{{ url_for('static', filename=event.image_url if event.image_url else 'img/default_event.png') }}"
+                     alt="Event Image" class="img-fluid">
+            </div>
+            
+            <!-- Display event status -->
+            <div class="mb-3">
+                <span class="badge badge-{{ 'danger' if event.status == 'Cancelled' else 'secondary' if event.status == 'Inactive' else 'success' if event.status == 'Open' else 'warning' }}">
+                    {{ event.status }}
+                </span>
+            </div>
+            
+            <!-- Display event information -->
+            <div class="d-flex flex-column align-items-start mb-3">
+                <div class="mb-2">
+                    <strong>Location:</strong> {{ event.location }}
+                </div>
+                <div class="mb-2">
+                    <strong>Description:</strong> {{ event.description }}
+                </div>
+                
+                <!-- Participant count display with icon -->
+                <div class="d-flex align-items-center justify-content-start mb-2">
+                    <img src="{{ url_for('static', filename='img/participant.png') }}" 
+                         class="card-participant-icon {% if event.participants >= event.max_participants %}icon-sold-out{% endif %}" 
+                         alt="Player Icon">
+                    <span class="card-text mx-1">{{ event.participants }}/{{ event.max_participants }}</span>
+                    <span class="badge">Participants</span>
+                </div>
+                
+                <!-- Spectator count display with icon -->
+                <div class="d-flex align-items-center justify-content-start">
+                    <img src="{{ url_for('static', filename='img/spectator.png') }}" 
+                         class="card-participant-icon {% if event.spectators >= event.max_spectators %}icon-sold-out{% endif %}" 
+                         alt="Spectator Icon">
+                    <span class="card-text mx-1">{{ event.spectators }}/{{ event.max_spectators }}</span>
+                    <span class="badge">Spectators</span>
+                </div>
+            </div>
+
+            <!--booking section for authenticated users -->
+            {% if current_user.is_authenticated %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Book Your Ticket</h5>
+                        <form action="{{ url_for('main.book_event', event_id=event.id) }}" method="POST">
+                            <div class="form-group">
+                                <label for="booking_option">Select Ticket Type and Quantity:</label>
+                                <select class="form-control" id="booking_option" name="booking_option" required>
+                                    <option value="">Select ticket type and quantity</option>
+                                    
+                                    <!--ticket options for participants -->
+                                    {% if event.participants < event.max_participants %}
+                                        <option value="participant-1">1 Participant Ticket - ${{ "%.2f"|format(event.ticket_price * 1) }}</option>
+                                        <option value="participant-2">2 Participant Tickets - ${{ "%.2f"|format(event.ticket_price * 2) }}</option>
+                                        <option value="participant-3">3 Participant Tickets - ${{ "%.2f"|format(event.ticket_price * 3) }}</option>
+                                        <option value="participant-4">4 Participant Tickets - ${{ "%.2f"|format(event.ticket_price * 4) }}</option>
+                                    {% endif %}
+                                    
+                                    <!--Ticket options for spectators -->
+                                    {% if event.spectators < event.max_spectators %}
+                                        <option value="spectator-1">1 Spectator Ticket - Free</option>
+                                        <option value="spectator-2">2 Spectator Tickets - Free</option>
+                                        <option value="spectator-3">3 Spectator Tickets - Free</option>
+                                        <option value="spectator-4">4 Spectator Tickets - Free</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                            <div class="mt-3">
+                                <p>Price per participant ticket: ${{ "%.2f"|format(event.ticket_price) }}</p>
+                                <button type="submit" class="btn btn-primary">Book Now</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% else %}
+                <!--Message prompting login for booking -->
+                <div class="alert alert-info">
+                    Please <a href="{{ url_for('auth.login') }}">log in</a> to book tickets.
+                </div>
+            {% endif %}
+        </div>
+
+        <!--comments column -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Comments</h5>
+                </div>
+                <div class="card-body">
+                    <!--Display existing comments -->
+                    <div class="comments-box mb-3">
+                        {% if comments %}
+                            {% for comment in comments %}
+                                <div class="comment mb-3">
+                                    <strong>{{ comment.author.first_name }} {{ comment.author.surname }}:</strong>
+                                    <p>{{ comment.content }}</p>
+                                    <small class="text-muted">Posted on {{ comment.posted_at.strftime('%B %d, %Y %I:%M %p') }}</small>
+                                </div>
+                                {% if not loop.last %}
+                                    <hr>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <!--Message for no comments -->
+                            <p class="text-center text-muted">No comments yet</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!--Comment form for authenticated users -->
+                    {% if current_user.is_authenticated %}
+                        <form action="{{ url_for('main.add_comment', event_id=event.id) }}" method="POST">
+                            <div class="form-group">
+                                <label for="content">Add a Comment:</label>
+                                <textarea name="content" id="content" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Post Comment</button>
+                        </form>
+                    {% else %}
+                        <!--Prompt for login to post comments -->
+                        <p class="text-center">
+                            <a href="{{ url_for('auth.login') }}">Log in</a> to post comments
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

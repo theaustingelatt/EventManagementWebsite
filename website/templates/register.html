@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block header %}
+    <!--Header section -->
+    <header class="site-header">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <h1 class="site-title">GameNexus</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center text-center">
+        <div class="col-md-6">
+            <div class="logincard text-center">
+                <div class="logincard-header">
+                    <h3 class="logincard-title mb-3">Register</h3>
+                </div>
+               
+                <div class="logincard-body">
+                    <!--Messages for displaying registration feedback -->
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <!--Registration form -->
+                    <form action="{{ url_for('auth.register') }}" method="POST">
+                        {{ register_form.hidden_tag() }}
+                        <div class="form-container">
+                            <!--First Name field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.first_name(class="form-control", placeholder="First Name") }}
+                                {% if register_form.first_name.errors %}
+                                    {% for error in register_form.first_name.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Surname field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.surname(class="form-control", placeholder="Surname") }}
+                                {% if register_form.surname.errors %}
+                                    {% for error in register_form.surname.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Email address field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.email(class="form-control", placeholder="Email Address") }}
+                                {% if register_form.email.errors %}
+                                    {% for error in register_form.email.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Contact number field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.contact_number(class="form-control", placeholder="Contact Number") }}
+                                {% if register_form.contact_number.errors %}
+                                    {% for error in register_form.contact_number.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Street address field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.street_address(class="form-control", placeholder="Street Address") }}
+                                {% if register_form.street_address.errors %}
+                                    {% for error in register_form.street_address.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Password field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.password(class="form-control", placeholder="Password") }}
+                                {% if register_form.password.errors %}
+                                    {% for error in register_form.password.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Confirm password field -->
+                            <div class="form-group mb-3">
+                                {{ register_form.confirm(class="form-control", placeholder="Confirm Password") }}
+                                {% if register_form.confirm.errors %}
+                                    {% for error in register_form.confirm.errors %}
+                                        <span class="text-danger">{{ error }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            
+                            <!--Submit button-->
+                            <div class="form-group mb-3">
+                                {{ register_form.submit(class="btn btn-primary w-100") }}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+               
+                <div class="logincard-footer text-center">
+                    <h5>Already have an account?</h5>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-link">Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
